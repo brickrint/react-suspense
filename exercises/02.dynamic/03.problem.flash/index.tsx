@@ -2,14 +2,15 @@ import { Suspense, use, useState, useTransition } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { ErrorBoundary } from 'react-error-boundary'
 // 💰 you're gonna want this:
-// import { useSpinDelay } from 'spin-delay'
+import { useSpinDelay } from 'spin-delay'
 import { getImageUrlForShip, getShip } from './utils.tsx'
 
 function App() {
 	const [shipName, setShipName] = useState('Dreadnought')
 	// 🐨 rename this to isTransitionPending
-	const [isPending, startTransition] = useTransition()
+	const [isTransitionPending, startTransition] = useTransition()
 	// 🐨 create an isPending based on what you get back from useSpinDelay
+	const isPending = useSpinDelay(isTransitionPending, { minDuration: 350, delay: 300 })
 
 	function handleShipSelection(newShipName: string) {
 		startTransition(() => {

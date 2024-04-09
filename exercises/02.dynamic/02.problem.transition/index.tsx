@@ -1,4 +1,4 @@
-import { Suspense, use, useState } from 'react'
+import { Suspense, use, useState, useTransition } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { ErrorBoundary } from 'react-error-boundary'
 import { getImageUrlForShip, getShip } from './utils.tsx'
@@ -6,10 +6,13 @@ import { getImageUrlForShip, getShip } from './utils.tsx'
 function App() {
 	const [shipName, setShipName] = useState('Dreadnought')
 	// 🐨 call useTransition here to get the isPending boolean and startTransition function
+	const [isPending, startTransition] = useTransition()
 
 	function handleShipSelection(newShipName: string) {
 		// 🐨 wrap setShipName in startTransition
-		setShipName(newShipName)
+		startTransition(() => {
+			setShipName(newShipName)
+		})
 	}
 
 	return (
@@ -17,7 +20,7 @@ function App() {
 			<ShipButtons shipName={shipName} onShipSelect={handleShipSelection} />
 			<div className="app">
 				{/* 🐨 add inline styles to set the opacity to 0.6 if we're pending */}
-				<div className="details">
+				<div className="details" style={{ opacity: isPending ? 0.6 : 1 }}>
 					<ErrorBoundary fallback={<ShipError shipName={shipName} />}>
 						<Suspense fallback={<ShipFallback shipName={shipName} />}>
 							<ShipDetails shipName={shipName} />
