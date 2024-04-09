@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom/client'
 import { ErrorBoundary } from 'react-error-boundary'
 import { getImageUrlForShip, getShip, type Ship } from './utils.tsx'
 
-const shipName = 'Dreadyacht'
+const shipName = 'Dreadnought'
 
 function App() {
 	return (
@@ -24,22 +24,24 @@ function App() {
 let ship: Ship
 let error: unknown
 // 🐨 create a status variable here
+let status: 'pending' | 'fulfilled' | 'rejected' = 'pending'
 const shipPromise = getShip(shipName).then(
 	result => {
 		ship = result
-		// 🐨 set the status to 'fulfilled'
+		status = 'fulfilled'
 	},
 	err => {
 		error = err
 		// 🐨 set the status to 'rejected'
+		status = 'rejected'
 	},
 )
 
 function ShipDetails() {
 	// 🐨 change this condition to if the status is rejected
-	if (error) throw error
+	if (status === 'rejected') throw error
 	// 🐨 change this condition to if the status is pending
-	if (!ship) throw shipPromise
+	if (status === 'pending') throw shipPromise
 
 	return (
 		<div className="ship-info">

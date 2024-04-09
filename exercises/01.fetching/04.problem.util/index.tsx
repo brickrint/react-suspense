@@ -10,6 +10,28 @@ type UsePromise<Value> = Promise<Value> & {
 	reason: any
 }
 
+function use<Value>(value: Promise<Value>) {
+	const usePromise = value as UsePromise<Value>
+
+	if (usePromise.status === 'fullfilled') return usePromise.value
+	if (usePromise.status === 'rejected') throw usePromise.reason
+	if (usePromise.status === 'pending') throw usePromise
+
+	usePromise.status = 'pending'
+	usePromise.then(
+		(result) => {
+			usePromise.status = 'fullfilled'
+			usePromise.value = result
+		},
+		(error) => {
+			usePromise.status = 'rejected'
+			usePromise.reason = error
+		}
+	)
+
+	throw usePromise
+}
+
 // 🐨 create a function called "use" which accepts a promise and here's what it should do:
 // - assign the promise to a variable called "usePromise" as a UsePromise
 // - if the usePromise.status is fuilfilled, return usePromise.value
@@ -38,28 +60,11 @@ function App() {
 	)
 }
 
-// 💣 get rid of the ship, error, and status variables
-let ship: Ship
-let error: unknown
-let status: 'pending' | 'rejected' | 'fulfilled' = 'pending'
 const shipPromise = getShip(shipName)
-	// 💣 get rid of the .then here
-	.then(
-		result => {
-			ship = result
-			status = 'fulfilled'
-		},
-		err => {
-			error = err
-			status = 'rejected'
-		},
-	)
-
+	
 function ShipDetails() {
-	// 💣 get rid of these if statements
-	if (status === 'rejected') throw error
-	if (status === 'pending') throw shipPromise
 	// 🐨 create a ship variable that's set to use(shipPromise)
+	const ship = use(shipPromise)
 
 	return (
 		<div className="ship-info">
