@@ -1,8 +1,8 @@
-import { Suspense, use, useState, useTransition } from 'react'
+import React, { Suspense, use, useState, useTransition } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { ErrorBoundary } from 'react-error-boundary'
 import { useSpinDelay } from 'spin-delay'
-import { getImageUrlForShip, getShip } from './utils.tsx'
+import { getImageUrlForShip, getShip, imgSrc } from './utils.tsx'
 
 function App() {
 	const [shipName, setShipName] = useState('Dreadnought')
@@ -64,7 +64,7 @@ function ShipDetails({ shipName }: { shipName: string }) {
 		<div className="ship-info">
 			<div className="ship-info__img-wrapper">
 				{/* 🐨 change this to an Img component */}
-				<img
+				<Img
 					src={getImageUrlForShip(ship.name, { size: 200 })}
 					alt={ship.name}
 				/>
@@ -146,6 +146,13 @@ function ShipError({ shipName }: { shipName: string }) {
 // 💰 here's the types for your props: React.ComponentProps<'img'>
 //   - reassign the src to use(imgSrc(src)) from ./utils (you'll have to create imgSrc)
 // return an img element with all the props passed to it
+
+function Img(props: React.ComponentProps<'img'>) {
+	const { src = '', ...rest } = props
+	const imgPromise = use(imgSrc(src))
+
+	return <img src={imgPromise} {...rest} />
+}
 
 const rootEl = document.createElement('div')
 document.body.append(rootEl)

@@ -144,11 +144,13 @@ function ShipError({ shipName }: { shipName: string }) {
 function ShipImg(props: React.ComponentProps<'img'>) {
 	return (
 		// 🐨 add a key to this ErrorBoundary. Set it to props.src
-		<ErrorBoundary fallback={<img {...props} />}>
+		<ErrorBoundary key={props.src} fallback={<img {...props} />}>
 			{/* 🐨 wrap this in a Suspense boundary.
 			The fallback should be an <img /> with all the same props (like the
 			ErrorBoundary) except override the src attribute to "/img/fallback-ship.png" */}
-			<Img {...props} />
+			<Suspense fallback={<img {...props} src='/img/fallback-ship.png' />}>
+				<Img {...props} />
+			</Suspense>
 		</ErrorBoundary>
 	)
 }

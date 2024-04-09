@@ -22,11 +22,17 @@ async function getShipImpl(name: string, delay?: number) {
 }
 
 // 🐨 create an imgCache here that's a map of string and Promise<string>
+const imgCache = new Map<string, Promise<string>>()
 
 // 🐨 export a function called imgSrc that takes a src string
 //   - check if there's a imgPromise in the imgCache for the src, if not, create one with preloadImage(src)
 //   - set the imgPromise in the imgCache
 //   - return the imgPromise
+export function imgSrc(src: string) {
+	const imgPromise = imgCache.get(src) ?? preloadImage(src)
+	imgCache.set(src, imgPromise)
+	return imgPromise
+}
 
 // 🐨 create a function called preloadImage which accepts a src string
 // 🐨 return a promise. Its callback should:
@@ -34,6 +40,14 @@ async function getShipImpl(name: string, delay?: number) {
 //   - set the src of the image to the src passed to the function
 //   - set the onload of the image to resolve the promise with the src
 //   - set the onerror of the image to reject the promise
+function preloadImage(src: string): Promise<string> {
+	return new Promise((res, rej) => {
+		const img = new Image()
+		img.onload = () => res(src)
+		img.onerror = rej
+		img.src = src
+	})
+}
 
 export function getImageUrlForShip(
 	shipName: string,
