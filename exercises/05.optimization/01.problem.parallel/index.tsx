@@ -121,9 +121,10 @@ function SearchResults({
 }
 
 function ShipDetails({ shipName }: { shipName: string }) {
-	const ship = use(getShip(shipName))
 	// 🐨 move this above the use call, and swap from ship.name to shipName
-	const shipImgSrc = getImageUrlForShip(ship.name, { size: 200 })
+	const shipImgSrc = getImageUrlForShip(shipName, { size: 200 })
+	imgSrc(shipImgSrc)
+	const ship = use(getShip(shipName))
 	// 🐨 call imgSrc with shipImgSrc (make sure it's before the use call!)
 	return (
 		<div className="ship-info">
